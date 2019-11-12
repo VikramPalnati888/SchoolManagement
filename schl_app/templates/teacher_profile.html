@@ -1,0 +1,212 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"
+            integrity="sha384-Tc5IQib027qvyjSMfHjOMaLkfuWVxZxUPnCJA7l2mCWNIpG9mGCD8wGNIcPD7Txa"
+            crossorigin="anonymous"></script>
+    <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.7.1/jquery.min.js" type="text/javascript"></script>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    {% load staticfiles %}
+    <link href="{% static 'styles.css' %}" type="text/css" rel="stylesheet">
+    <style>
+        .textbox
+        {
+        width: 30%;
+        padding: 12px 20px;
+        margin: 8px 0;
+        box-sizing: border-box;
+        border: none;
+        border-bottom: 2px solid #345eeb;
+        }
+        #headings
+        {
+        font-family: Arial, Helvetica, sans-serif;
+        color:#345eeb;
+        font-size: 30px;
+        }
+        .submit {
+              background-color: #345eeb;
+              border: none;
+              color: white;
+              padding: 15px 32px;
+              text-align: center;
+              text-decoration: none;
+              display: inline-block;
+              font-size: 16px;
+              margin: 4px 2px;
+              cursor: pointer;
+              border-radius:10px;
+              margin-bottom:5px;
+            }
+
+
+
+
+    </style>
+</head>
+<body>
+<img src="{% static 'Logo.png' %}" style="width:200px;height:100px;">
+<div class="navbar">
+    {% csrf_token %}
+    <a href="{% url 'home page' %}">Welcome {{ user }}</a>
+    <a href="{% url 'Teacher Results View' %}">Student Results</a>
+    <a class="active" href="{% url 'Logout' %}">Signout</a>
+    <a href="{% url 'About Us' %}" style="float:right;">About Us</a>
+    <a href="{% url 'Contact Us' %}" style="float:right;">Contact Us</a>
+</div>
+<form action='{%url "Teacher Profile View" %}' autocomplete="off" id="techer_editForm">
+    {% csrf_token %}
+    <div class="container-fluid">
+        {% for profile in profiles %}
+        <div class="row">
+            <label>Name </label>
+            <div class="col-sm-10">
+                <input type="text" name="Name" required class="textbox" id="teacher_name"
+                       value="{{ profile.Name }}" disabled>
+            </div>
+        </div>
+        <div class="row">
+            <label>Teacher ID : </label>
+            <div class="col-sm-10">
+                <input type="text" name="Id" required class="textbox" id="teacher_id"
+                       value="{{ profile.Id }}" disabled>
+            </div>
+        </div>
+        <div class="row">
+            <label>Gender : </label>
+            <div class="col-sm-10">
+                <input type="text" name="Gender" required class="textbox" id="teacher_gender"
+                       value="{{ profile.Gender }}" disabled>
+            </div>
+        </div>
+        <div class="row">
+            <label>Father Name : </label>
+            <div class="col-sm-10">
+                <input type="text" name="Father_Name" required class="textbox" id="teacher_fa"
+                       value="{{ profile.Father_Name }}" disabled>
+            </div>
+        </div>
+
+        <div class="row">
+            <div class="col-xs-1"><label>Email Id : </label></div>
+            <div class="col-sm-10">
+                <input type="email" name="Email_Id" required class="textbox" id="teacher_em"
+                       value="{{ profile.Email_Id }}" disabled>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-xs-1">
+                <label>Mobile Number: </label></div>
+            <div class="col-sm-10">
+                <input type="number" name="Mobile_No" required class="textbox" id="teacher_no"
+                       value="{{ profile.Mobile_No }}" disabled>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-xs-1">
+                <label>Date Of Birth : </label></div>
+            <div class="col-sm-10">
+                <input type="date" name="date" required class="textbox"
+                       id="teacher_dob" data-date="" data-date-format="YYYY MMMM DD"
+                       value="{{ profile.DOB }}" class="textbox" disabled>
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+    <div class="row">
+        <div class="col-md-3">
+            <input type="button" class="submit" id="edit" value="Edit"
+                   onclick="enableTextBoxes()">
+            <button type="submit" class="submit" onClick="refreshPage()" id="btn1" disabled>Update</button>
+            <span><input type="button" class="submit" id="cancel" value="cancel"
+                   onclick="disableTextBoxes()" style="display:none;"></span>
+        </div>
+    </div>
+</form>
+<script src="http://code.jquery.com/jquery-3.3.1.min.js"
+        integrity="sha256-FgpCb/KJQlLNfOu91ta32o/NMZxltwRo8QtmkMRdAu8=" crossorigin="anonymous"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js"
+        integrity="sha384-ApNbgh9B+Y1QKtv3Rn7W3mgPxhU9K/ScQsAP7hUibX39j7fakFPskvXusvfa0b4Q" crossorigin="anonymous">
+</script>
+<script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js"
+        integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl" crossorigin="anonymous">
+</script>
+<script>
+<!--          ENABLE THE TEXT BOXES ON EDIT BUTTON CLICK          -->
+
+function refreshPage(){
+    window.location.reload();
+}
+
+function enableTextBoxes() {
+    var cells = document.getElementsByClassName("textbox");
+    for (var i = 0; i < cells.length; i++) {
+        cells[i].disabled = false;
+    }
+    document.getElementById("teacher_id").disabled = true;
+    document.getElementById("teacher_gender").disabled = true;
+    document.getElementById("teacher_em").disabled = true;
+    document.getElementById("btn1").disabled = false;
+    document.getElementById('cancel').style.display = "block";
+}
+function disableTextBoxes() {
+    var cells = document.getElementsByClassName("textbox");
+    for (var i = 0; i < cells.length; i++) {
+        cells[i].disabled = true;
+    }
+    document.getElementById('cancel').style.display = "none";
+    }
+
+        $(document).on('submit','#techer_editForm', function(e){
+              function getCookie(name) {
+                    var cookieValue = null;
+                    if (document.cookie && document.cookie != '') {
+                        var cookies = document.cookie.split(';');
+                        for (var i = 0; i < cookies.length; i++) {
+                            var cookie = jQuery.trim(cookies[i]);
+                            // Does this cookie string begin with the name we want?
+                            if (cookie.substring(0, name.length + 1) == (name + '=')) {
+                                cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                                break;
+                            }
+                        }
+                    }
+                    return cookieValue;
+                }
+                var csrftoken = getCookie('csrftoken');
+                function csrfSafeMethod(method) {
+                    // these HTTP methods do not require CSRF protection
+                    return (/^(GET|HEAD|OPTIONS|TRACE)$/.test(method));
+                }
+                $.ajaxSetup({
+                    beforeSend: function(xhr, settings) {
+                        if (!csrfSafeMethod(settings.type) && !this.crossDomain) {
+                            xhr.setRequestHeader("X-CSRFToken", csrftoken);
+                        }
+                    }
+                });
+
+            e.preventDefault()
+            $.ajax({
+                method: 'POST',
+                url: "{% url 'teacher profile update'%}",
+                data:{
+                       'Name': $('#teacher_name').val(),
+                       // 'Id': $('#teacher_id').val(),
+                       'Father_Name': $('#teacher_fa').val(),
+                       'Email_Id': $('#teacher_em').val(),
+                       'Mobile_No': $('#teacher_no').val(),
+                       'DOB': $('#teacher_dob').val()
+
+                },
+            });
+            alert('Profile Updated');
+            disableTextBoxes();
+            window.location.href = "http://127.0.0.1:8000/api/teacher_profile/";
+        })
+
+
+</script>
+</body>
+</html>

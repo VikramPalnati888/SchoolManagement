@@ -1,0 +1,230 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css"
+          integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
+</head>
+
+<meta name="viewport" content="width=device-width, initial-scale=1">
+{% load staticfiles %}
+<link href="{% static 'styles.css' %}" type="text/css" rel="stylesheet">
+<style>
+        .textbox
+        {
+        width: 30%;
+        padding: 12px 20px;
+        margin: 8px 0;
+        box-sizing: border-box;
+        border: none;
+        border-bottom: 2px solid #345eeb;
+        }
+        #headings
+        {
+        font-family: Arial, Helvetica, sans-serif;
+        color:#345eeb;
+        font-size: 30px;
+        }
+        .submit {
+              background-color: #345eeb;
+              border: none;
+              color: white;
+              padding: 15px 32px;
+              text-align: center;
+              text-decoration: none;
+              display: inline-block;
+              font-size: 16px;
+              margin: 4px 2px;
+              cursor: pointer;
+              border-radius:10px;
+              margin-bottom:5px;
+            }
+
+
+
+
+</style>
+</head>
+<body>
+{% if user.is_authenticated %}
+<div class="navbar">
+    <a href="{% url 'Logout' %}">Signout</a>
+</div>
+<div style="float:right;">Exam Ends in : <span id="time" style="color: red;">05:00</span> minutes!</div>
+<form action='{%url "Student Results View"%}' autocomplete="off" id="examForm">
+    <ol>
+        {% for questions in question %}
+        <li>{{ questions.Question }}</li>
+        <span><font>HINT: </font>
+            <input type="checkbox" id="{{ questions.Question_No }}" onclick="myFunction()" class="hint"></span>
+        <font id="{{ questions.Lable_No }}" style="display:none;" class="msg">{{ questions.Hint }}</font><br>
+        {% for items in questions.Choices %}
+        <input type="radio" name="{{ questions.Question }}" value="{{ items }}">{{ items }}<br>
+        {% endfor %}
+        {% endfor %}
+    </ol>
+    <div class="row">
+        <div class="col-md-3">
+            <button type="submit" class="btn btn-primary form-control" id="btn1">SUBMIT</button>
+        </div>
+    </div>
+</form>
+{% else %}
+<h1>Cannot open Test..You are not authenticated for this</h1>
+{% endif %}
+<script src="http://code.jquery.com/jquery-3.3.1.min.js"
+        integrity="sha256-FgpCb/KJQlLNfOu91ta32o/NMZxltwRo8QtmkMRdAu8=" crossorigin="anonymous"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js"
+        integrity="sha384-ApNbgh9B+Y1QKtv3Rn7W3mgPxhU9K/ScQsAP7hUibX39j7fakFPskvXusvfa0b4Q" crossorigin="anonymous">
+</script>
+<script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js"
+        integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl" crossorigin="anonymous">
+</script>
+<script>
+function myFunction() {
+  var checkBox1 = document.getElementById("q1");
+  var checkBox2 = document.getElementById("q2");
+  var checkBox3 = document.getElementById("q3");
+  var checkBox4 = document.getElementById("q4");
+  var checkBox5 = document.getElementById("q5");
+  var text1 = document.getElementById("l1");
+  var text2 = document.getElementById("l2");
+  var text3 = document.getElementById("l3");
+  var text4 = document.getElementById("l4");
+  var text5 = document.getElementById("l5");
+  if (checkBox1.checked == true){
+  document.getElementById("q1").disabled = true;
+    text1.style.display = "block";
+  }
+    if (checkBox2.checked == true){
+    document.getElementById("q2").disabled = true;
+    text2.style.display = "block";
+  }
+    if (checkBox3.checked == true){
+    document.getElementById("q3").disabled = true;
+    text3.style.display = "block";
+  }
+      if (checkBox4.checked == true){
+    document.getElementById("q4").disabled = true;
+    text4.style.display = "block";
+  }
+      if (checkBox5.checked == true){
+    document.getElementById("q5").disabled = true;
+    text5.style.display = "block";
+  }
+  }
+  function preventBack(){window.history.forward();}
+  setTimeout("preventBack()", 0);
+  window.onunload=function(){null};
+<!--  THE BELOW 2 METHODS REDIRECTS TO RESULT PAGE AFTER WRITING THE EXAM-->
+     function exam_timeout()
+     {
+        document.getElementById("btn1").click();
+     }
+
+
+
+<!--  TIMER RELATED CODE GOES HERE -->
+window.onload = function () {
+    var fiveMinutes = 60 * 5,
+    display = document.querySelector('#time');
+    startTimer(fiveMinutes, display);
+    setTimeout('exam_timeout()', 302000)
+};
+
+function startTimer(duration, display) {
+    var timer = duration, minutes, seconds;
+    setInterval(function () {
+        minutes = parseInt(timer / 60, 10)
+        seconds = parseInt(timer % 60, 10);
+
+        minutes = minutes < 10 ? "0" + minutes : minutes;
+        seconds = seconds < 10 ? "0" + seconds : seconds;
+
+        display.textContent = minutes + ":" + seconds;
+        if (--timer < 0) {
+            timer = duration;
+        }
+    }, 1000);
+}
+        $('#examForm').on('submit', function(event) {
+            // using jQuery
+                function getCookie(name) {
+                    var cookieValue = null;
+                    if (document.cookie && document.cookie != '') {
+                        var cookies = document.cookie.split(';');
+                        for (var i = 0; i < cookies.length; i++) {
+                            var cookie = jQuery.trim(cookies[i]);
+                            // Does this cookie string begin with the name we want?
+                            if (cookie.substring(0, name.length + 1) == (name + '=')) {
+                                cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                                break;
+                            }
+                        }
+                    }
+                    return cookieValue;
+                }
+                var csrftoken = getCookie('csrftoken');
+                function csrfSafeMethod(method) {
+                    // these HTTP methods do not require CSRF protection
+                    return (/^(GET|HEAD|OPTIONS|TRACE)$/.test(method));
+                }
+                $.ajaxSetup({
+                    beforeSend: function(xhr, settings) {
+                        if (!csrfSafeMethod(settings.type) && !this.crossDomain) {
+                            xhr.setRequestHeader("X-CSRFToken", csrftoken);
+                        }
+                    }
+                });
+
+            event.preventDefault()
+            var rawData = event.target.getElementsByTagName('input');
+            var data = []
+            for(i = 0; i < rawData.length; i++) {
+                if(rawData[i].type == "radio" && rawData[i].checked) {
+                    data.push({
+                        question : rawData[i].name,
+                        ans : rawData[i].value,
+                        hint : ""
+                    });
+                }
+                else{
+                        data.push({
+                        question : rawData[i].name,
+                        ans : "",
+                        hint : ""
+                    });
+                }
+            }
+         <!--            CHECK BOX CODE      -->
+             var inputElems = document.getElementsByClassName("hint");
+            for (var i=0; i<inputElems.length; i++)
+            {
+                if (inputElems[i].type == "checkbox" && inputElems[i].checked == true)
+                {
+                  data[i]['hint']="checked";
+               }
+               else
+               {
+                  data[i]['hint']="Unchecked";
+               }
+            }
+        <!--            CHECK BOX CODE      -->
+            console.log('array data', data)
+            if(data.length > 0) {
+                $.ajax({
+                    method: "POST",
+                    url: "{% url 'Test Data' %}",
+                    data: JSON.stringify(data),
+                });
+            }
+            alert('Exam Completed');
+            window.location="http://127.0.0.1:8000/api/results/";
+    })
+<!--    INFORMS THE USER TO NOT GO TO BACK WHILE WRITING THE EXAM   -->
+window.onbeforeunload = function() { return "Your exam progress will be lost."; };
+
+</script>
+</body>
+</html>
+
+<!-- "https://api.mlab.com/api/1/databases/newapi/collections/userdetails?apiKey=PY2E5LtsakOOqKaXb8VciACX4-iK-O-n" -->
